@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankingSystem.Api", "BankingSystem.Api\BankingSystem.Api.csproj", "{F602E9E9-0A85-4C35-A8E3-C4F29D4A4AA4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankingSystem.Common", "BankingSystem.Common\BankingSystem.Common.csproj", "{0595E4AC-EBE8-47FB-A075-7ABB7AA1355A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F602E9E9-0A85-4C35-A8E3-C4F29D4A4AA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F602E9E9-0A85-4C35-A8E3-C4F29D4A4AA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F602E9E9-0A85-4C35-A8E3-C4F29D4A4AA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F602E9E9-0A85-4C35-A8E3-C4F29D4A4AA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0595E4AC-EBE8-47FB-A075-7ABB7AA1355A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0595E4AC-EBE8-47FB-A075-7ABB7AA1355A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0595E4AC-EBE8-47FB-A075-7ABB7AA1355A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0595E4AC-EBE8-47FB-A075-7ABB7AA1355A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
