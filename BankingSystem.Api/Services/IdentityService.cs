@@ -1,5 +1,6 @@
 using BankingSystem.Api.Domain;
 using BankingSystem.Api.Entities;
+using BankingSystem.Api.Extensions;
 using BankingSystem.Api.Mappers;
 using BankingSystem.Api.Repositories;
 using FluentResults;
@@ -11,17 +12,17 @@ namespace BankingSystem.Api.Services;
 public class IdentityService : IIdentityService
 {
     private readonly IIdentityRepository _identityRepository;
-    private readonly IBankAccountRepository _bankAccountRepository;
+    private readonly IBankAccountService _bankAccountService;
     private readonly IValidator<RegistrationFormDomain> _registrationFormValidator;
     private readonly IValidator<LoginFormDomain> _loginFormValidator;
     private readonly HashProvider _hashProvider;
-    public IdentityService(IValidator<RegistrationFormDomain> registrationFormValidator, IIdentityRepository identityRepository, IValidator<LoginFormDomain> loginFormValidator, HashProvider hashProvider, IBankAccountRepository bankAccountRepository)
+    public IdentityService(IValidator<RegistrationFormDomain> registrationFormValidator, IIdentityRepository identityRepository, IValidator<LoginFormDomain> loginFormValidator, HashProvider hashProvider, IBankAccountService bankAccountService)
     {
         _registrationFormValidator = registrationFormValidator;
         _identityRepository = identityRepository;
         _loginFormValidator = loginFormValidator;
         _hashProvider = hashProvider;
-        _bankAccountRepository = bankAccountRepository;
+        _bankAccountService = bankAccountService;
     }
 
     public async Task<IEnumerable<UserDomain>> GetAllAsync(CancellationToken cancellationToken)
@@ -35,16 +36,16 @@ public class IdentityService : IIdentityService
         var validationResult = await _registrationFormValidator.ValidateAsync(form, cancellationToken);
         if (validationResult.IsValid == false)
         {
-            return HandleValidationErrors(validationResult.Errors);
+            return validationResult.ToFailedResult();
         }
 
-        var bankAccountCreatingResult = await _bankAccountRepository.CreateAsync(new BankAccountEntity { Money = 0 }, cancellationToken);
+        var bankAccountCreatingResult = await _bankAccountService.CreateAsync(new BankAccountDomain(Guid.Empty,0), cancellationToken);
         if (bankAccountCreatingResult.IsFailed)
             return Result.Fail(bankAccountCreatingResult.Errors);
 
-        var bankAccount = bankAccountCreatingResult.Value;
+        var bankAccountId = bankAccountCreatingResult.Value;
         string passwordHash = _hashProvider.GenerateHash(form.Password);
-        var registrationResult = await _identityRepository.CreateUserAsync(form.Username, passwordHash, bankAccount.Id, cancellationToken);
+        var registrationResult = await _identityRepository.CreateUserAsync(form.Username, passwordHash, bankAccountId, cancellationToken);
         return ToServiceResponse(registrationResult);
     }
 
@@ -53,19 +54,12 @@ public class IdentityService : IIdentityService
         var validationResult = await _loginFormValidator.ValidateAsync(form, cancellationToken);
         if (validationResult.IsValid == false)
         {
-            return HandleValidationErrors(validationResult.Errors);
+            return validationResult.ToFailedResult();
         }
 
         string passwordHash = _hashProvider.GenerateHash(form.Password);
         var loginResult = await _identityRepository.LoginAsync(form.Username, passwordHash, cancellationToken);
         return ToServiceResponse(loginResult);
-    }
-
-    private Result HandleValidationErrors(IEnumerable<ValidationFailure> validationFailures)
-    {
-        var errors = validationFailures .Select(x => new Error(x.ErrorMessage, 
-            new Error(x.PropertyName)));
-        return Result.Fail(errors);
     }
 
     private Result<UserDomain> ToServiceResponse(Result<ApplicationUserEntity> result)
