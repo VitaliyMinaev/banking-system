@@ -1,4 +1,4 @@
-# banking-system
+# Banking System Demo
 The application simulates the operation of banking operations. Interaction between network nodes takes place using "thin client" technology.
 
 The client application can contact the server application and order registration, authorization and account status operations
