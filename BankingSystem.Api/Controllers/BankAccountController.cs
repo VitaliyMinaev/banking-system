@@ -1,3 +1,5 @@
+using BankingSystem.Api.Mappers;
+using BankingSystem.Api.Services;
 using BankingSystem.Common;
 using Microsoft.AspNetCore.Mvc;
 
@@ -5,9 +7,19 @@ namespace BankingSystem.Api.Controllers;
 
 public class BankAccountController : ControllerBase
 {
-    [HttpGet, Route(ApiRoutes.BankAccount.Get)]
-    public async Task<IActionResult> Get()
+    private readonly IBankAccountService _bankAccountService;
+    public BankAccountController(IBankAccountService bankAccountService)
     {
-        throw new NotImplementedException();
+        _bankAccountService = bankAccountService;
+    }
+
+    [HttpGet, Route(ApiRoutes.BankAccount.Get)]
+    public async Task<IActionResult> Get([FromRoute] Guid id, CancellationToken cancellationToken)
+    {
+        var bankAccount = await _bankAccountService.GetAsync(id, cancellationToken);
+        if (bankAccount is null)
+            return NotFound();
+
+        return Ok(bankAccount.ToViewModel());
     }
 }

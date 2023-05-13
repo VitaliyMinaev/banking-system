@@ -14,7 +14,7 @@ public static class ApiRoutes
     }
     public static class BankAccount
     {
-        public const string Get = $"{Base}/BankAccount";
+        public const string Get = $"{Base}/BankAccount" + "/{id}";
     }
 
     public static class HealthCheck
