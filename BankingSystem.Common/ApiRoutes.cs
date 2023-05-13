@@ -12,6 +12,10 @@ public static class ApiRoutes
         public const string Register = $"{Base}/Register";
         public const string Login = $"{Base}/Login";
     }
+    public static class BankAccount
+    {
+        public const string Get = $"{Base}/BankAccount";
+    }
 
     public static class HealthCheck
     {

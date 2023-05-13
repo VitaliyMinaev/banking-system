@@ -21,12 +21,13 @@ public class IdentityRepository : IIdentityRepository
         return await _context.Users.ToListAsync(cancellationToken);
     }
 
-    public async Task<Result<ApplicationUserEntity>> RegisterAsync(string username, string passwordHash, CancellationToken cancellationToken)
+    public async Task<Result<ApplicationUserEntity>> CreateUserAsync(string username, string passwordHash, Guid bankAccountId, CancellationToken cancellationToken)
     {
         var user = new ApplicationUserEntity
         {
             Username = username,
             PasswordHash = passwordHash,
+            BankAccountId = bankAccountId,
             RegistrationTime = DateTime.Now
         };
 

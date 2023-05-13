@@ -14,4 +14,8 @@ public class ApplicationUserEntity
     public string PasswordHash { get; set; } = String.Empty;
     [Required, Column(TypeName = "datetime2")]
     public DateTime RegistrationTime { get; set; } = DateTime.Now;
+    
+    [ForeignKey(nameof(BankAccount))]
+    public Guid BankAccountId { get; set; }
+    public BankAccountEntity? BankAccount { get; set; }
 }
