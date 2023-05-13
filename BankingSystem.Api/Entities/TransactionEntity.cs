@@ -12,10 +12,10 @@ public class TransactionEntity
     public double Amount { get; set; }
     
     [ForeignKey(nameof(BankAccountEntity))]
-    public Guid BankAccountId { get; set; }
-    public BankAccountEntity? BankAccount { get; set; }
+    public Guid BankAccountSenderId { get; set; }
+    public BankAccountEntity? BankAccountSender { get; set; }
     
     [ForeignKey(nameof(BankAccountEntity))]
     public Guid BankAccountRecipientId { get; set; }
-    public BankAccountEntity? Recipient { get; set; }
+    public BankAccountEntity? BankAccountRecipient { get; set; }
 }

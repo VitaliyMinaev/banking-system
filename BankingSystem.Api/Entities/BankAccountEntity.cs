@@ -14,6 +14,4 @@ public class BankAccountEntity
     [ForeignKey(nameof(ApplicationUserEntity))]
     public Guid OwnerId { get; set; }
     public ApplicationUserEntity? Owner { get; set; }
-
-    public ICollection<TransactionEntity>? Transaction { get; set; }
 }

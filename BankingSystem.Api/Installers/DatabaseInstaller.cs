@@ -15,7 +15,7 @@ public static class DatabaseInstaller
             throw new ArgumentException("Connection string not found!");
         }
 
-        services.AddDbContext<ApplicationDbContext>(options =>
+        services.AddDbContext<ApplicationDatabaseContext>(options =>
         {
             options.UseSqlServer(connectionString);
         });

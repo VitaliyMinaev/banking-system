@@ -3,12 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BankingSystem.Api.Data;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDatabaseContext : DbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-    { }
-
     public DbSet<ApplicationUserEntity> Users { get; set; }
     public DbSet<BankAccountEntity> BankAccountEntities { get; set; }
     public DbSet<TransactionEntity> Transactions { get; set; }
+    public ApplicationDatabaseContext(DbContextOptions<ApplicationDatabaseContext> options) : base(options)
+    { }
 }

@@ -1,4 +1,6 @@
 using BankingSystem.Api.Domain;
+using BankingSystem.Api.Entities;
+using BankingSystem.Api.Mappers;
 using BankingSystem.Api.Repositories;
 using FluentResults;
 using FluentValidation;
@@ -18,7 +20,7 @@ public class IdentityService : IIdentityService
         _loginFormValidator = loginFormValidator;
     }
 
-    public async Task<Result> RegisterAsync(RegistrationFormDomain form, CancellationToken cancellationToken)
+    public async Task<Result<UserDomain>> RegisterAsync(RegistrationFormDomain form, CancellationToken cancellationToken)
     {
         var validationResult = await _registrationFormValidator.ValidateAsync(form, cancellationToken);
         if (validationResult.IsValid == false)
@@ -27,10 +29,10 @@ public class IdentityService : IIdentityService
         }
 
         var registrationResult = await _identityRepository.RegisterAsync(form.Username, form.Password, cancellationToken);
-        return registrationResult;
+        return ToServiceResponse(registrationResult);
     }
 
-    public async Task<Result> LoginAsync(LoginFormDomain form, CancellationToken cancellationToken)
+    public async Task<Result<UserDomain>> LoginAsync(LoginFormDomain form, CancellationToken cancellationToken)
     {        
         var validationResult = await _loginFormValidator.ValidateAsync(form, cancellationToken);
         if (validationResult.IsValid == false)
@@ -39,7 +41,7 @@ public class IdentityService : IIdentityService
         }
 
         var loginResult = await _identityRepository.LoginAsync(form.Username, form.Password, cancellationToken);
-        return loginResult;
+        return ToServiceResponse(loginResult);
     }
 
     private Result HandleValidationErrors(IEnumerable<ValidationFailure> validationFailures)
@@ -47,5 +49,12 @@ public class IdentityService : IIdentityService
         var errors = validationFailures .Select(x => new Error(x.ErrorMessage, 
             new Error(x.PropertyName)));
         return Result.Fail(errors);
+    }
+
+    private Result<UserDomain> ToServiceResponse(Result<ApplicationUserEntity> result)
+    {
+        if (result.IsFailed)
+            return Result.Fail(result.Errors);
+        return Result.Ok(result.Value.ToDomain());
     }
 }

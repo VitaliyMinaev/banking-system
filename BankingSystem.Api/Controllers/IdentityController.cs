@@ -4,6 +4,7 @@ using BankingSystem.Api.Services;
 using BankingSystem.Common;
 using BankingSystem.Common.Contracts.Requests;
 using BankingSystem.Common.Contracts.Responses;
+using FluentResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BankingSystem.Api.Controllers;
@@ -11,9 +12,11 @@ namespace BankingSystem.Api.Controllers;
 public class IdentityController : ControllerBase
 {
     private readonly IIdentityService _identityService;
-    public IdentityController(IIdentityService identityService)
+    private readonly JwtGeneratorService _jwtGenerator;
+    public IdentityController(IIdentityService identityService, JwtGeneratorService jwtGenerator)
     {
         _identityService = identityService;
+        _jwtGenerator = jwtGenerator;
     }
 
     [HttpPost, Route(ApiRoutes.Identity.Register)]
@@ -21,7 +24,20 @@ public class IdentityController : ControllerBase
     {
         var form = new RegistrationFormDomain(request.Username, request.Password);
         var result = await _identityService.RegisterAsync(form, cancellationToken);
+        return HandleAuthResult(result);
+    }
+    
+    [HttpPost, Route(ApiRoutes.Identity.Login)]
+    public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
+    {
+        var form = new LoginFormDomain(request.Username, request.Password);
+        var result = await _identityService.LoginAsync(form, cancellationToken);
         
+        return HandleAuthResult(result);
+    }
+
+    private IActionResult HandleAuthResult(Result<UserDomain> result)
+    {
         if (result.IsFailed)
         {
             if (result.IsValidationProblem() == true)
@@ -31,20 +47,8 @@ public class IdentityController : ControllerBase
             return BadRequest(failedResponse);
         }
 
-        // return access token
-        throw new NotImplementedException();
-    }
-    
-    [HttpPost, Route(ApiRoutes.Identity.Login)]
-    public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
-    {
-        var form = new LoginFormDomain(request.Username, request.Password);
-        var result = await _identityService.LoginAsync(form, cancellationToken);
-        
-        // validate result
-        
-        // return response
-
-        throw new NotImplementedException();
+        var user = result.Value;
+        var token = _jwtGenerator.GenerateGwt(user);
+        return Ok(new AuthenticationSuccessResponse { AccessToken = token });
     }
 }
