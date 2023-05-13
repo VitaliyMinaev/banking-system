@@ -15,7 +15,9 @@ public class RegistrationFormDomainValidator : AbstractValidator<RegistrationFor
             .MustAsync(async (username, cancellationToken) =>
             {
                 var exists = await identityRepository.UsernameAlreadyExistsAsync(username, cancellationToken);
-                return exists != true;
+                if (exists)
+                    return false;
+                return true;
             })
             .WithMessage("User with given username already exists!");
 

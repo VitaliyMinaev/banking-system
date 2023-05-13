@@ -31,7 +31,7 @@ public class IdentityService : IIdentityService
         var validationResult = await _registrationFormValidator.ValidateAsync(form, cancellationToken);
         if (validationResult.IsValid == false)
         {
-            HandleValidationErrors(validationResult.Errors);
+            return HandleValidationErrors(validationResult.Errors);
         }
 
         var registrationResult = await _identityRepository.RegisterAsync(form.Username, form.Password, cancellationToken);
@@ -43,7 +43,7 @@ public class IdentityService : IIdentityService
         var validationResult = await _loginFormValidator.ValidateAsync(form, cancellationToken);
         if (validationResult.IsValid == false)
         {
-            HandleValidationErrors(validationResult.Errors);
+            return HandleValidationErrors(validationResult.Errors);
         }
 
         var loginResult = await _identityRepository.LoginAsync(form.Username, form.Password, cancellationToken);

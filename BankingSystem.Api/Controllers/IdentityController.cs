@@ -30,6 +30,9 @@ public class IdentityController : ControllerBase
     [HttpPost, Route(ApiRoutes.Identity.Register)]
     public async Task<IActionResult> Register([FromBody] RegistrationRequest request, CancellationToken cancellationToken)
     {
+        if (ModelState.IsValid == false)
+            return ValidationProblem(ModelState);
+        
         var form = new RegistrationFormDomain(request.Username, request.Password);
         var result = await _identityService.RegisterAsync(form, cancellationToken);
         return HandleAuthResult(result);
@@ -38,6 +41,9 @@ public class IdentityController : ControllerBase
     [HttpPost, Route(ApiRoutes.Identity.Login)]
     public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
+        if (ModelState.IsValid == false)
+            return ValidationProblem(ModelState);
+        
         var form = new LoginFormDomain(request.Username, request.Password);
         var result = await _identityService.LoginAsync(form, cancellationToken);
         
