@@ -20,6 +20,12 @@ public class IdentityService : IIdentityService
         _loginFormValidator = loginFormValidator;
     }
 
+    public async Task<IEnumerable<UserDomain>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        var users = await _identityRepository.GetAllAsync(cancellationToken);
+        return users.Select(x => x.ToDomain());
+    }
+
     public async Task<Result<UserDomain>> RegisterAsync(RegistrationFormDomain form, CancellationToken cancellationToken)
     {
         var validationResult = await _registrationFormValidator.ValidateAsync(form, cancellationToken);

@@ -8,6 +8,7 @@ public static class ApiRoutes
     
     public static class Identity
     {
+        public const string GetAll = $"{Base}/Identity";
         public const string Register = $"{Base}/Register";
         public const string Login = $"{Base}/Login";
     }

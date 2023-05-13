@@ -72,17 +72,15 @@ namespace BankingSystem.Api.Data.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("BankAccountRecipientId")
+                    b.Property<Guid>("BankAccountId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("BankAccountSenderId")
+                    b.Property<Guid>("BankAccountRecipientId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BankAccountRecipientId");
-
-                    b.HasIndex("BankAccountSenderId");
+                    b.HasIndex("BankAccountId");
 
                     b.ToTable("Transactions");
                 });
@@ -100,21 +98,18 @@ namespace BankingSystem.Api.Data.Migrations
 
             modelBuilder.Entity("BankingSystem.Api.Entities.TransactionEntity", b =>
                 {
-                    b.HasOne("BankingSystem.Api.Entities.BankAccountEntity", "BankAccountRecipient")
-                        .WithMany()
-                        .HasForeignKey("BankAccountRecipientId")
+                    b.HasOne("BankingSystem.Api.Entities.BankAccountEntity", "BankAccount")
+                        .WithMany("Transactions")
+                        .HasForeignKey("BankAccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BankingSystem.Api.Entities.BankAccountEntity", "BankAccountSender")
-                        .WithMany()
-                        .HasForeignKey("BankAccountSenderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("BankAccount");
+                });
 
-                    b.Navigation("BankAccountRecipient");
-
-                    b.Navigation("BankAccountSender");
+            modelBuilder.Entity("BankingSystem.Api.Entities.BankAccountEntity", b =>
+                {
+                    b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618
         }

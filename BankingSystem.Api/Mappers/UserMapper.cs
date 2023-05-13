@@ -1,5 +1,6 @@
 using BankingSystem.Api.Domain;
 using BankingSystem.Api.Entities;
+using BankingSystem.Common.Contracts.Responses;
 
 namespace BankingSystem.Api.Mappers;
 
@@ -17,5 +18,10 @@ public static class UserMapper
             Username = user.Username,
             PasswordHash = user.PasswordHash
         };
+    }
+
+    public static UserViewModel ToViewModel(this UserDomain user)
+    {
+        return new UserViewModel { Id = user.Id, Username = user.Username };
     }
 }

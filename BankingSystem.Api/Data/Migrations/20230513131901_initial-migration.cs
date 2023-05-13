@@ -50,21 +50,15 @@ namespace BankingSystem.Api.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Amount = table.Column<int>(type: "int", nullable: false),
-                    BankAccountSenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BankAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BankAccountRecipientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Transactions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Transactions_BankAccounts_BankAccountRecipientId",
-                        column: x => x.BankAccountRecipientId,
-                        principalTable: "BankAccounts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Transactions_BankAccounts_BankAccountSenderId",
-                        column: x => x.BankAccountSenderId,
+                        name: "FK_Transactions_BankAccounts_BankAccountId",
+                        column: x => x.BankAccountId,
                         principalTable: "BankAccounts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -76,14 +70,9 @@ namespace BankingSystem.Api.Data.Migrations
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transactions_BankAccountRecipientId",
+                name: "IX_Transactions_BankAccountId",
                 table: "Transactions",
-                column: "BankAccountRecipientId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Transactions_BankAccountSenderId",
-                table: "Transactions",
-                column: "BankAccountSenderId");
+                column: "BankAccountId");
         }
 
         /// <inheritdoc />

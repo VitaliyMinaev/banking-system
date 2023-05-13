@@ -1,5 +1,6 @@
 using BankingSystem.Api.Domain;
 using BankingSystem.Api.Extensions;
+using BankingSystem.Api.Mappers;
 using BankingSystem.Api.Services;
 using BankingSystem.Common;
 using BankingSystem.Common.Contracts.Requests;
@@ -17,6 +18,13 @@ public class IdentityController : ControllerBase
     {
         _identityService = identityService;
         _jwtGenerator = jwtGenerator;
+    }
+
+    [HttpGet, Route(ApiRoutes.Identity.GetAll)]
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    {
+        var users = await _identityService.GetAllAsync(cancellationToken);
+        return Ok(users.Select(x => x.ToViewModel()));
     }
 
     [HttpPost, Route(ApiRoutes.Identity.Register)]

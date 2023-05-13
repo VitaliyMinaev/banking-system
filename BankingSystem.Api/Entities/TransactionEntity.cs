@@ -11,11 +11,9 @@ public class TransactionEntity
     [Required, Column(TypeName = "int"), Range(0, int.MaxValue)]
     public double Amount { get; set; }
     
-    [ForeignKey(nameof(BankAccountEntity))]
-    public Guid BankAccountSenderId { get; set; }
-    public BankAccountEntity? BankAccountSender { get; set; }
+    [ForeignKey(nameof(BankAccount))]
+    public Guid BankAccountId { get; set; }
+    public BankAccountEntity? BankAccount { get; set; }
     
-    [ForeignKey(nameof(BankAccountEntity))]
     public Guid BankAccountRecipientId { get; set; }
-    public BankAccountEntity? BankAccountRecipient { get; set; }
 }
