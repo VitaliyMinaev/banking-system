@@ -27,7 +27,7 @@ public class RegistrationFormDomainValidator : AbstractValidator<RegistrationFor
             .Must((password) =>
             {
                 // Define the regular expression pattern for password validation
-                string pattern = @"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$";
+                string pattern = @"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$";
         
                 // Create a Regex object with the pattern
                 var regex = new Regex(pattern);

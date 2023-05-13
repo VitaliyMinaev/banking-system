@@ -13,11 +13,13 @@ public class IdentityService : IIdentityService
     private readonly IIdentityRepository _identityRepository;
     private readonly IValidator<RegistrationFormDomain> _registrationFormValidator;
     private readonly IValidator<LoginFormDomain> _loginFormValidator;
-    public IdentityService(IValidator<RegistrationFormDomain> registrationFormValidator, IIdentityRepository identityRepository, IValidator<LoginFormDomain> loginFormValidator)
+    private readonly HashProvider _hashProvider;
+    public IdentityService(IValidator<RegistrationFormDomain> registrationFormValidator, IIdentityRepository identityRepository, IValidator<LoginFormDomain> loginFormValidator, HashProvider hashProvider)
     {
         _registrationFormValidator = registrationFormValidator;
         _identityRepository = identityRepository;
         _loginFormValidator = loginFormValidator;
+        _hashProvider = hashProvider;
     }
 
     public async Task<IEnumerable<UserDomain>> GetAllAsync(CancellationToken cancellationToken)
@@ -34,7 +36,8 @@ public class IdentityService : IIdentityService
             return HandleValidationErrors(validationResult.Errors);
         }
 
-        var registrationResult = await _identityRepository.RegisterAsync(form.Username, form.Password, cancellationToken);
+        string passwordHash = _hashProvider.GenerateHash(form.Password);
+        var registrationResult = await _identityRepository.RegisterAsync(form.Username, passwordHash, cancellationToken);
         return ToServiceResponse(registrationResult);
     }
 
@@ -46,7 +49,8 @@ public class IdentityService : IIdentityService
             return HandleValidationErrors(validationResult.Errors);
         }
 
-        var loginResult = await _identityRepository.LoginAsync(form.Username, form.Password, cancellationToken);
+        string passwordHash = _hashProvider.GenerateHash(form.Password);
+        var loginResult = await _identityRepository.LoginAsync(form.Username, passwordHash, cancellationToken);
         return ToServiceResponse(loginResult);
     }
 

@@ -10,7 +10,7 @@ public class ApplicationUserEntity
     public Guid Id { get; set; }
     [Required, Column(TypeName = "nvarchar(128)"), MinLength(6)]
     public string Username { get; set; } = String.Empty;
-    [Required, Column(TypeName = "nvarchar(128)"), MinLength(6)]
+    [Required, Column(TypeName = "nvarchar(512)"), MinLength(6)]
     public string PasswordHash { get; set; } = String.Empty;
     [Required, Column(TypeName = "datetime2")]
     public DateTime RegistrationTime { get; set; } = DateTime.Now;

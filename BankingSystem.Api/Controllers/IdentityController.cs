@@ -6,6 +6,7 @@ using BankingSystem.Common;
 using BankingSystem.Common.Contracts.Requests;
 using BankingSystem.Common.Contracts.Responses;
 using FluentResults;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BankingSystem.Api.Controllers;
@@ -20,7 +21,7 @@ public class IdentityController : ControllerBase
         _jwtGenerator = jwtGenerator;
     }
 
-    [HttpGet, Route(ApiRoutes.Identity.GetAll)]
+    [HttpGet, Route(ApiRoutes.Identity.GetAll), Authorize]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         var users = await _identityService.GetAllAsync(cancellationToken);
