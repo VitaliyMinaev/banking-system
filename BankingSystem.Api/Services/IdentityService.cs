@@ -31,7 +31,7 @@ public class IdentityService : IIdentityService
         return users.Select(x => x.ToDomain());
     }
 
-    public async Task<Result<UserDomain>> CreateUserAsync(RegistrationFormDomain form, CancellationToken cancellationToken)
+    public async Task<Result<UserDomain>> RegisterAsync(RegistrationFormDomain form, CancellationToken cancellationToken)
     {
         var validationResult = await _registrationFormValidator.ValidateAsync(form, cancellationToken);
         if (validationResult.IsValid == false)

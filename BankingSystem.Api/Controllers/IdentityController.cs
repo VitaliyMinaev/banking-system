@@ -35,7 +35,7 @@ public class IdentityController : ControllerBase
             return ValidationProblem(ModelState);
         
         var form = new RegistrationFormDomain(request.Username, request.Password);
-        var result = await _identityService.CreateUserAsync(form, cancellationToken);
+        var result = await _identityService.RegisterAsync(form, cancellationToken);
         return HandleAuthResult(result);
     }
     
