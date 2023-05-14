@@ -1,8 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankingSystem.Api", "BankingSystem.Api\BankingSystem.Api.csproj", "{F602E9E9-0A85-4C35-A8E3-C4F29D4A4AA4}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33516.290
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankingSystem.Api", "BankingSystem.Api\BankingSystem.Api.csproj", "{F602E9E9-0A85-4C35-A8E3-C4F29D4A4AA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankingSystem.Common", "BankingSystem.Common\BankingSystem.Common.csproj", "{0595E4AC-EBE8-47FB-A075-7ABB7AA1355A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankingSystem.Common", "BankingSystem.Common\BankingSystem.Common.csproj", "{0595E4AC-EBE8-47FB-A075-7ABB7AA1355A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankingSystem.UI", "BankingSystem.UI\BankingSystem.UI.csproj", "{83FD8D14-66B9-4C7F-8A1F-ADDCE2733844}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +23,12 @@ Global
 		{0595E4AC-EBE8-47FB-A075-7ABB7AA1355A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0595E4AC-EBE8-47FB-A075-7ABB7AA1355A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0595E4AC-EBE8-47FB-A075-7ABB7AA1355A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83FD8D14-66B9-4C7F-8A1F-ADDCE2733844}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83FD8D14-66B9-4C7F-8A1F-ADDCE2733844}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83FD8D14-66B9-4C7F-8A1F-ADDCE2733844}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83FD8D14-66B9-4C7F-8A1F-ADDCE2733844}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
