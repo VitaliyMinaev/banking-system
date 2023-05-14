@@ -14,7 +14,8 @@ public static class ApiRoutes
     }
     public static class BankAccount
     {
-        public const string Get = $"{Base}/BankAccount" + "/{id}";
+        public const string GetByUser = $"{Base}/BankAccount";
+        public const string GetById = $"{Base}/BankAccount" + "/{id}";
         public const string Withdraw = $"{Base}/BankAccount/Withdraw";
         public const string Replenish = $"{Base}/BankAccount/Replenish";
         public const string TopUp = $"{Base}/BankAccount/Topup";

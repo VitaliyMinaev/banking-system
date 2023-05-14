@@ -16,7 +16,8 @@ public class BankAccountService : IBankAccountService
     private readonly IValidator<WithdrawTransactionDomain> _withdrawValidator;
     private readonly IValidator<ReplenishTransactionDomain> _replenishValidator;
     private readonly IValidator<TopUpTransactionDomain> _topUpValidator;
-    public BankAccountService(IBankAccountRepository bankAccountRepository, IValidator<BankAccountDomain> validator, IValidator<WithdrawTransactionDomain> withdrawValidator, IValidator<ReplenishTransactionDomain> replenishValidator, ITransactionService transactionService, IValidator<TopUpTransactionDomain> topUpValidator)
+    private readonly ILogger<BankAccountService> _logger;
+    public BankAccountService(IBankAccountRepository bankAccountRepository, IValidator<BankAccountDomain> validator, IValidator<WithdrawTransactionDomain> withdrawValidator, IValidator<ReplenishTransactionDomain> replenishValidator, ITransactionService transactionService, IValidator<TopUpTransactionDomain> topUpValidator, ILogger<BankAccountService> logger)
     {
         _bankAccountRepository = bankAccountRepository;
         _validator = validator;
@@ -24,8 +25,27 @@ public class BankAccountService : IBankAccountService
         _replenishValidator = replenishValidator;
         _transactionService = transactionService;
         _topUpValidator = topUpValidator;
+        _logger = logger;
     }
 
+    public async Task<BankAccountDomain?> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var entity = await _bankAccountRepository.GetByUserIdAsync(userId, cancellationToken);
+            return entity.ToDomain();
+        }
+        catch (InvalidOperationException e)
+        {
+            return null;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Can not get bank account by user id!");
+            throw;
+        }
+    }
+    
     public async Task<BankAccountDomain?> GetAsync(Guid id, CancellationToken cancellationToken)
     {
         var entity = await _bankAccountRepository.GetByIdAsync(id, cancellationToken);

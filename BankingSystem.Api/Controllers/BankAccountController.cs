@@ -20,7 +20,21 @@ public class BankAccountController : ControllerBase
         _bankAccountService = bankAccountService;
     }
 
-    [HttpGet, Route(ApiRoutes.BankAccount.Get)]
+    [HttpGet, Route(ApiRoutes.BankAccount.GetByUser)]
+    public async Task<IActionResult> GetByUserId(CancellationToken cancellationToken)
+    {
+        (bool, Guid) tryResult = User.TryGetUserId();
+        if (tryResult.Item1 == false)
+            return Unauthorized();
+        Guid userId = tryResult.Item2;
+        
+        var bankAccount = await _bankAccountService.GetByUserIdAsync(userId, cancellationToken);
+        if (bankAccount is null)
+            return NotFound();
+
+        return Ok(bankAccount.ToViewModel());
+    }
+    [HttpGet, Route(ApiRoutes.BankAccount.GetById)]
     public async Task<IActionResult> Get([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var bankAccount = await _bankAccountService.GetAsync(id, cancellationToken);
