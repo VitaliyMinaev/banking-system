@@ -1,3 +1,3 @@
 namespace BankingSystem.Api.Domain;
 
-public record WithdrawTransactionDomain(Guid OwnerOfBankAccountId, double Amount);
+public record WithdrawTransactionDomain(Guid OwnerOfBankAccountId, double Amount)  : TransactionBase(Amount);

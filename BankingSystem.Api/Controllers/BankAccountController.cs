@@ -44,6 +44,20 @@ public class BankAccountController : ControllerBase
         return HandleTransactionResult(result);
     }
 
+    [HttpPut, Route(ApiRoutes.BankAccount.TopUp)]
+    public async Task<IActionResult> TopUp([FromBody] TopUpRequest request, CancellationToken cancellationToken)
+    {
+        (bool, Guid) tryResult = User.TryGetUserId();
+        if (tryResult.Item1 == false)
+            return Unauthorized();
+
+        Guid userId = tryResult.Item2;
+        var result = await _bankAccountService.TopUpAsync(new TopUpTransactionDomain(userId, request.Amount),
+            cancellationToken);
+
+        return HandleTransactionResult(result);
+    }
+    
     [HttpPut, Route(ApiRoutes.BankAccount.Replenish)]
     public async Task<IActionResult> Replenish([FromBody] ReplenishRequest request, CancellationToken cancellationToken)
     {
@@ -52,7 +66,7 @@ public class BankAccountController : ControllerBase
             return Unauthorized();
 
         Guid userId = tryResult.Item2;
-        var result = await _bankAccountService.ReplenishAsync(new ReplenishTransactionDomain(userId, userId, request.Amount),
+        var result = await _bankAccountService.ReplenishAsync(new ReplenishTransactionDomain(userId, request.RecipientId, request.Amount),
             cancellationToken);
 
         return HandleTransactionResult(result);

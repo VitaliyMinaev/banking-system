@@ -15,13 +15,15 @@ public class BankAccountService : IBankAccountService
     private readonly IValidator<BankAccountDomain> _validator;
     private readonly IValidator<WithdrawTransactionDomain> _withdrawValidator;
     private readonly IValidator<ReplenishTransactionDomain> _replenishValidator;
-    public BankAccountService(IBankAccountRepository bankAccountRepository, IValidator<BankAccountDomain> validator, IValidator<WithdrawTransactionDomain> withdrawValidator, IValidator<ReplenishTransactionDomain> replenishValidator, ITransactionService transactionService)
+    private readonly IValidator<TopUpTransactionDomain> _topUpValidator;
+    public BankAccountService(IBankAccountRepository bankAccountRepository, IValidator<BankAccountDomain> validator, IValidator<WithdrawTransactionDomain> withdrawValidator, IValidator<ReplenishTransactionDomain> replenishValidator, ITransactionService transactionService, IValidator<TopUpTransactionDomain> topUpValidator)
     {
         _bankAccountRepository = bankAccountRepository;
         _validator = validator;
         _withdrawValidator = withdrawValidator;
         _replenishValidator = replenishValidator;
         _transactionService = transactionService;
+        _topUpValidator = topUpValidator;
     }
 
     public async Task<BankAccountDomain?> GetAsync(Guid id, CancellationToken cancellationToken)
@@ -65,7 +67,7 @@ public class BankAccountService : IBankAccountService
         if(transactionResult.IsFailed)
             return Result.Fail(transactionResult.Errors);
 
-        var transactionAdding = await _transactionService.CreateAsync(transaction, cancellationToken);
+        var transactionAdding = await _transactionService.CreateAsync(transaction, bankAccount.ToDomain(), cancellationToken);
         if (transactionAdding.IsFailed)
         {
             throw new Exception($"Can not create transaction: {transactionAdding.Errors.First().Message}");
@@ -82,17 +84,47 @@ public class BankAccountService : IBankAccountService
             return validationResult.ToFailedResult();
         }
         
-        var bankAccount = await _bankAccountRepository.GetByUserIdAsync(transaction.SenderId, cancellationToken);
-        if (bankAccount.Money - transaction.Amount < 0)
+        var senderBankAccount = await _bankAccountRepository.GetByUserIdAsync(transaction.SenderId, cancellationToken);
+        if (senderBankAccount.Money - transaction.Amount < 0)
             return Result.Fail(new Error(ErrorMessages.BankAccount.Operations.NotEnoughMoney));
+
+        senderBankAccount.Money -= transaction.Amount;
+        var transactionResult = await _bankAccountRepository.UpdateAsync(senderBankAccount, cancellationToken);
+        if(transactionResult.IsFailed)
+            return Result.Fail(transactionResult.Errors);
         
-        bankAccount.Money -= transaction.Amount;
+        var recipientBankAccount = await _bankAccountRepository.GetByUserIdAsync(transaction.RecipientId, cancellationToken);
+        recipientBankAccount.Money += transaction.Amount;
+        var recipientTransactionResult = await _bankAccountRepository.UpdateAsync(senderBankAccount, cancellationToken);
+        if(recipientTransactionResult.IsFailed)
+            return Result.Fail(transactionResult.Errors);
+
+        var transactionAdding = await _transactionService.CreateAsync(transaction, 
+            senderBankAccount.ToDomain(), recipientBankAccount.ToDomain(), cancellationToken);
+        if (transactionAdding.IsFailed)
+        {
+            throw new Exception($"Can not create transaction: {transactionAdding.Errors.First().Message}");
+        }
+        
+        return Result.Ok(transactionResult.Value.ToDomain());
+    }
+
+    public async Task<Result<BankAccountDomain>> TopUpAsync(TopUpTransactionDomain transaction, CancellationToken cancellationToken)
+    {
+        var validationResult = await _topUpValidator.ValidateAsync(transaction, cancellationToken);
+        if (validationResult.IsValid == false)
+        {
+            return validationResult.ToFailedResult();
+        }
+        
+        var bankAccount = await _bankAccountRepository.GetByUserIdAsync(transaction.UserId, cancellationToken);
+        
+        bankAccount.Money += transaction.Amount;
         var transactionResult = await _bankAccountRepository.UpdateAsync(bankAccount, cancellationToken);
-        
         if(transactionResult.IsFailed)
             return Result.Fail(transactionResult.Errors);
 
-        var transactionAdding = await _transactionService.CreateAsync(transaction, cancellationToken);
+        var transactionAdding = await _transactionService.CreateAsync(transaction, bankAccount.ToDomain(), cancellationToken);
         if (transactionAdding.IsFailed)
         {
             throw new Exception($"Can not create transaction: {transactionAdding.Errors.First().Message}");

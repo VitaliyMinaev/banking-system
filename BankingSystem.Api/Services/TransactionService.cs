@@ -13,27 +13,41 @@ public class TransactionService : ITransactionService
         _transactionRepository = transactionRepository;
     }
 
-    public async Task<Result> CreateAsync(WithdrawTransactionDomain transaction, CancellationToken cancellationToken)
+    public async Task<Result> CreateAsync(WithdrawTransactionDomain transaction, BankAccountDomain from, CancellationToken cancellationToken)
     {
         var entity = new TransactionEntity
         {
             Id = Guid.NewGuid(), 
             Amount = transaction.Amount, 
-            BankAccountId = transaction.OwnerOfBankAccountId,
-            BankAccountRecipientId = Guid.Empty
+            BankAccountId = from.Id,
+            BankAccountRecipientId = null
         };
 
         return await _transactionRepository.CreateAsync(entity, cancellationToken);
     }
 
-    public async Task<Result> CreateAsync(ReplenishTransactionDomain transaction, CancellationToken cancellationToken)
+    public async Task<Result> CreateAsync(ReplenishTransactionDomain transaction, BankAccountDomain from, BankAccountDomain to,
+        CancellationToken cancellationToken)
     {
         var entity = new TransactionEntity
         {
             Id = Guid.NewGuid(), 
             Amount = transaction.Amount, 
-            BankAccountId = transaction.SenderId,
-            BankAccountRecipientId = transaction.RecipientId
+            BankAccountId = from.Id,
+            BankAccountRecipientId = to.Id
+        };
+
+        return await _transactionRepository.CreateAsync(entity, cancellationToken);
+    }
+
+    public async Task<Result> CreateAsync(TopUpTransactionDomain transaction, BankAccountDomain to, CancellationToken cancellationToken)
+    {
+        var entity = new TransactionEntity
+        {
+            Id = Guid.NewGuid(), 
+            Amount = transaction.Amount, 
+            BankAccountId = null,
+            BankAccountRecipientId = to.Id
         };
 
         return await _transactionRepository.CreateAsync(entity, cancellationToken);
