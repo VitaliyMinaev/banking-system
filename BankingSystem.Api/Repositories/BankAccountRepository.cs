@@ -16,7 +16,23 @@ public class BankAccountRepository : IBankAccountRepository
         _logger = logger;
     }
 
-    public async Task<BankAccountEntity?> GetAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<BankAccountEntity> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var user = await _context.Users
+            .Include(x => x.BankAccount)
+            .FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
+        if (user is null)
+        {
+            throw new InvalidOperationException("There is no user with given id");
+        }
+
+        if (user.BankAccount is not null) 
+            return user.BankAccount;
+        
+        throw new InvalidOperationException("Given user does not have back account");
+    }
+
+    public async Task<BankAccountEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var bankAccount = await _context.BankAccounts.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         return bankAccount;
@@ -40,7 +56,7 @@ public class BankAccountRepository : IBankAccountRepository
     {
         ValidateFieldsIfInvalidThrowException(designation);
 
-        var source = await GetAsync(designation.Id, cancellationToken);
+        var source = await GetByIdAsync(designation.Id, cancellationToken);
         if (source is null)
             return Result.Fail(new Error(ErrorMessages.BankAccount.NotFound));
 
@@ -51,7 +67,7 @@ public class BankAccountRepository : IBankAccountRepository
 
     public async Task<Result> DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        var bankAccount = await GetAsync(id, cancellationToken);
+        var bankAccount = await GetByIdAsync(id, cancellationToken);
         if (bankAccount is null)
             return Result.Fail(new Error(ErrorMessages.BankAccount.NotFound));
 

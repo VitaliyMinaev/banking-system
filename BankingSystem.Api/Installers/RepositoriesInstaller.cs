@@ -8,5 +8,6 @@ public static class RepositoriesInstaller
     {
         services.AddScoped<IIdentityRepository, IdentityRepository>();
         services.AddScoped<IBankAccountRepository, BankAccountRepository>();
+        services.AddScoped<ITransactionRepository, TransactionRepository>();
     }
 }

@@ -7,4 +7,6 @@ public interface IBankAccountService
 {
     Task<BankAccountDomain?> GetAsync(Guid id, CancellationToken cancellationToken);
     Task<Result<Guid>> CreateAsync(BankAccountDomain bankAccount, CancellationToken cancellationToken);
+    Task<Result<BankAccountDomain>> WithdrawAsync(WithdrawTransactionDomain transaction, CancellationToken cancellationToken);
+    Task<Result<BankAccountDomain>> ReplenishAsync(ReplenishTransactionDomain transaction, CancellationToken cancellationToken);
 }

@@ -1,8 +1,11 @@
+using BankingSystem.Api.Domain;
 using BankingSystem.Api.Extensions;
 using BankingSystem.Api.Mappers;
 using BankingSystem.Api.Services;
 using BankingSystem.Common;
 using BankingSystem.Common.Contracts.Requests;
+using BankingSystem.Common.Contracts.Responses;
+using FluentResults;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,19 +31,44 @@ public class BankAccountController : ControllerBase
     }
 
     [HttpPut, Route(ApiRoutes.BankAccount.Withdraw)]
-    public async Task<IActionResult> Withdraw([FromBody] WithdrawRequest request)
+    public async Task<IActionResult> Withdraw([FromBody] WithdrawRequest request, CancellationToken cancellationToken)
     {
-        // get user id -> get from it bank account -> validate operation -> execute operation -> return result 
         (bool, Guid) tryResult = User.TryGetUserId();
         if (tryResult.Item1 == false)
             return Unauthorized();
-        
-        throw new NotImplementedException();
+
+        Guid userId = tryResult.Item2;
+        var result = await _bankAccountService.WithdrawAsync(new WithdrawTransactionDomain(userId, request.Amount),
+                cancellationToken);
+
+        return HandleTransactionResult(result);
     }
 
     [HttpPut, Route(ApiRoutes.BankAccount.Replenish)]
-    public async Task<IActionResult> Replenish([FromBody] ReplenishRequest request)
+    public async Task<IActionResult> Replenish([FromBody] ReplenishRequest request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        (bool, Guid) tryResult = User.TryGetUserId();
+        if (tryResult.Item1 == false)
+            return Unauthorized();
+
+        Guid userId = tryResult.Item2;
+        var result = await _bankAccountService.ReplenishAsync(new ReplenishTransactionDomain(userId, userId, request.Amount),
+            cancellationToken);
+
+        return HandleTransactionResult(result);
+    }
+    
+    private IActionResult HandleTransactionResult(Result<BankAccountDomain> result)
+    {
+        if (result.IsFailed)
+        {
+            if (result.IsValidationProblem() == true)
+                return ValidationProblem(result.BuildModelState());
+
+            var failedResponse = new TransactionFailedResponse() { Errors = result.Errors.Select(x => x.Message).ToArray() };
+            return BadRequest(failedResponse);
+        }
+
+        return Ok(new TransactionSuccessResponse { BankAccountAmount = result.Value.Money });
     }
 }

@@ -16,6 +16,11 @@ public class IdentityRepository : IIdentityRepository
         _logger = logger;
     }
 
+    public async Task<ApplicationUserEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return await _context.Users.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+    }
+
     public async Task<IEnumerable<ApplicationUserEntity>> GetAllAsync(CancellationToken cancellationToken)
     {
         return await _context.Users.ToListAsync(cancellationToken);

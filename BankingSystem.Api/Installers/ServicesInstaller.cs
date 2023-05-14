@@ -8,6 +8,8 @@ public static class ServicesInstaller
     {
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IBankAccountService, BankAccountService>();
+        services.AddScoped<ITransactionService, TransactionService>();
+        
         services.AddSingleton<HashProvider>();
         services.AddScoped<JwtGeneratorService>();
     }
