@@ -22,6 +22,7 @@ public class TransactionRepository : ITransactionRepository
             transaction.Id = Guid.NewGuid();
         
         await _context.Transactions.AddAsync(transaction, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
         return Result.Ok();
     }
 }
