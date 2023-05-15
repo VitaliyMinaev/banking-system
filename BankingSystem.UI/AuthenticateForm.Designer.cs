@@ -56,6 +56,8 @@
             // loginCheckBox
             // 
             loginCheckBox.AutoSize = true;
+            loginCheckBox.Checked = true;
+            loginCheckBox.CheckState = CheckState.Checked;
             loginCheckBox.Location = new Point(3, 133);
             loginCheckBox.Name = "loginCheckBox";
             loginCheckBox.Size = new Size(193, 24);
@@ -81,6 +83,7 @@
             passwordTextBox.Name = "passwordTextBox";
             passwordTextBox.Size = new Size(360, 34);
             passwordTextBox.TabIndex = 3;
+            passwordTextBox.Text = "Bb7518Ch@";
             passwordTextBox.UseSystemPasswordChar = true;
             // 
             // usernameTextBox
@@ -90,6 +93,7 @@
             usernameTextBox.Name = "usernameTextBox";
             usernameTextBox.Size = new Size(360, 34);
             usernameTextBox.TabIndex = 2;
+            usernameTextBox.Text = "vitaliy minaev";
             // 
             // label2
             // 

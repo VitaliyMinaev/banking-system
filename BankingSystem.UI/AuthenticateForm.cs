@@ -21,7 +21,7 @@ namespace BankingSystem.UI
             try
             {
                 AuthResponse? result = null;
-                if(loginCheckBox.Checked)
+                if (loginCheckBox.Checked)
                 {
                     result = await _api.LoginAsync(new LoginRequest
                     {
